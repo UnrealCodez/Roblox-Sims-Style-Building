@@ -43,10 +43,10 @@ Mouse.Button1Down:connect(function()
 	local Target = Mouse.Target
 	if Target == nil then
 	elseif SelectedBuilding == BuildModes[2].Value then
-		--Coming too :D
+		--Coming soon
 	elseif SelectedBuilding == BuildModes[3].Value then
-		local NewWindow = game.Repl
-		if (Mouse.Hit - )
+		--local NewWindow = game.Repl
+		--if (Mouse.Hit - )
 	elseif SelectedBuilding == BuildModes[4].Value and Target.Name == "Baseplate" then
 		if P1 == nil and P2Placed == false then
 			local BP = Vector3.new(math.floor(MousePos.X), math.floor(MousePos.Y), math.floor(MousePos.Z))
