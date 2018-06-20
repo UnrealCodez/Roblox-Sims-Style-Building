@@ -1,4 +1,5 @@
 local ItemsStatsHandler = require(game.ReplicatedStorage.Scripts.Items)
+local Items = game.ReplicatedStorage.Items
 local Remotes = game.ReplicatedStorage.Remotes
 local Player = game.Players.LocalPlayer
 local Mouse = Player:GetMouse()
@@ -43,10 +44,47 @@ Mouse.Button1Down:connect(function()
 	local Target = Mouse.Target
 	if Target == nil then
 	elseif SelectedBuilding == BuildModes[2].Value then
-		--Coming soon
-	elseif SelectedBuilding == BuildModes[3].Value then
-		--local NewWindow = game.Repl
-		--if (Mouse.Hit - )
+		--Coming soon :D
+	elseif SelectedBuilding == BuildModes[3].Value and Target.Name == "WallHitbox" then --Client side only right now
+		
+		local NewWindow = Items[ItemsStatsHandler.Windows[1].Name]:Clone()
+		if NewWindow.Hitbox.Size.X < Target.Size.Z - 2 then
+			NewWindow.Parent = game.Workspace
+			local NewCFrame
+			local MP = Vector3.new(MousePos.X, MousePos.Y, MousePos.Z)
+			local TargetPosition = Target.Position
+			local Mag = (MP - TargetPosition).magnitude
+			print(math.floor(Mag))
+			if (Target.Orientation.Y >= 0 and Target.Orientation.Y <= 90) then
+				if MousePos.Z > Target.Position.Z then
+					print((Target.Size.Z - (NewWindow.Hitbox.Size.Z / 2)) - 1, (Target.Size.Z + (NewWindow.Hitbox.Size.Z / 2)) - 1)
+					if Mag >= (Target.Size.Z + (NewWindow.Hitbox.Size.X / 2)) - 1 then
+					else
+						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(-Mag), 0, 0)
+					end
+				elseif MousePos.Z < Target.Position.Z then
+					if Mag >= (Target.Size.Z - (NewWindow.Hitbox.Size.X / 2)) - 1 then
+					else
+						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(Mag), 0, 0)
+					end
+				end
+			elseif (Target.Orientation.Y <= 0 and Target.Orientation.Y >= -90)  then
+				if MousePos.Z < Target.Position.Z then
+					print((Target.Size.Z - (NewWindow.Hitbox.Size.Z / 2)) - 1, (Target.Size.Z + (NewWindow.Hitbox.Size.Z / 2)) - 1)
+					if Mag >= (Target.Size.Z + (NewWindow.Hitbox.Size.X / 2)) - 1 then
+					else
+						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(Mag), 0, 0)
+					end
+				elseif MousePos.Z > Target.Position.Z then
+					if Mag >= (Target.Size.Z - (NewWindow.Hitbox.Size.X / 2)) - 1 then
+					else
+						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(-Mag), 0, 0)
+					end
+				end
+			end
+			NewWindow:SetPrimaryPartCFrame(NewCFrame)
+		end
+		
 	elseif SelectedBuilding == BuildModes[4].Value and Target.Name == "Baseplate" then
 		if P1 == nil and P2Placed == false then
 			local BP = Vector3.new(math.floor(MousePos.X), math.floor(MousePos.Y), math.floor(MousePos.Z))
@@ -110,13 +148,14 @@ Mouse.Button1Down:connect(function()
 			P1Placed = false P2Placed = false
 			Wall:Destroy() WallS1:Destroy() WallS2:Destroy()
 			Wall = nil WallS1 = nil WallS2 = nil
+			Mouse.TargetFilter = nil
 		end
 	else
 	end
 end)
 
 Mouse.KeyDown:connect(function(Key)
-	if Key == "f" then
+	if Key == "f" and P1 == nil then
 		if SelectedBuilding == 4 then
 			SelectedBuilding = 1
 		else
@@ -130,6 +169,7 @@ Mouse.KeyDown:connect(function(Key)
 		P1Placed = false P2Placed = false
 		Wall:Destroy() WallS1:Destroy() WallS2:Destroy()
 		Wall = nil WallS1 = nil WallS2 = nil
+		Mouse.TargetFilter = nil
 		
 	end
 end)
@@ -137,19 +177,19 @@ end)
 while wait(0.03) do
 	local MousePos = Mouse.Hit
 	local Target = Mouse.Target
-	local TargetFilter = game.Workspace.Walls
-	Mouse.TargetFilter = TargetFilter
 	if SelectedBuilding == BuildModes[2].Value then
 	elseif SelectedBuilding == BuildModes[3].Value then
 		
-	elseif SelectedBuilding == BuildModes[4].Value then
+	elseif SelectedBuilding == BuildModes[4].Value and P1 ~= nil then
+		local TargetFilter = game.Workspace.Walls
+		Mouse.TargetFilter = TargetFilter
 		if Wall ~= nil and P1 ~= nil then
 			local Mag = (P1.Position - P2.Position).magnitude
 			local MP = P1.Position:Lerp(P2.Position, 0.5) -- Get the middle point
 			
 			
 			Wall.CFrame = CFrame.new(Vector3.new(MP.X, MP.Y, MP.Z), P1.Position) * CFrame.new(0, 0, 0)
-			Wall.Size = Vector3.new(0.45, 8, Mag)
+			Wall.Size = Vector3.new(1, 8, Mag)
 			
 			WallS1.CFrame = CFrame.new(Vector3.new(MP.X, MP.Y, MP.Z), P1.Position) * CFrame.new(0.1, 0, 0)
 			WallS1.Size = Vector3.new(0.2, 8, Mag)
