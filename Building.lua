@@ -4,8 +4,6 @@ local Remotes = game.ReplicatedStorage.Remotes
 local Player = game.Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
-print(game.Workspace.Camera.ViewportSize)
-
 local Surfaces = {"FrontSurface", "BackSurface", "LeftSurface", "RightSurface", "TopSurface", "BottomSurface"}
 
 local P1, P2 -- Build Points
