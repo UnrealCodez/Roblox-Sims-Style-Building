@@ -53,34 +53,61 @@ Mouse.Button1Down:connect(function()
 			local TargetPosition = Target.Position
 			local Mag = (MP - TargetPosition).magnitude
 			print(math.floor(Mag))
-			if (Target.Orientation.Y >= 0 and Target.Orientation.Y <= 90) then
+			if (Target.Orientation.Y >= 0 and Target.Orientation.Y <= 90) then -- +Z
 				if MousePos.Z > Target.Position.Z then
-					print((Target.Size.Z - (NewWindow.Hitbox.Size.Z / 2)) - 1, (Target.Size.Z + (NewWindow.Hitbox.Size.Z / 2)) - 1)
-					if Mag >= (Target.Size.Z + (NewWindow.Hitbox.Size.X / 2)) - 1 then
+					if Mag >= ((Target.Size.Z / 2) - (NewWindow.Hitbox.Size.X / 2)) - 2 then
 					else
 						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(-Mag), 0, 0)
 					end
 				elseif MousePos.Z < Target.Position.Z then
-					if Mag >= (Target.Size.Z - (NewWindow.Hitbox.Size.X / 2)) - 1 then
+					if Mag >= ((Target.Size.Z / 2) - (NewWindow.Hitbox.Size.X / 2)) - 2 then
 					else
 						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(Mag), 0, 0)
 					end
 				end
-			elseif (Target.Orientation.Y <= 0 and Target.Orientation.Y >= -90)  then
+			elseif (Target.Orientation.Y <= 0 and Target.Orientation.Y >= -90)  then -- -Z
 				if MousePos.Z < Target.Position.Z then
-					print((Target.Size.Z - (NewWindow.Hitbox.Size.Z / 2)) - 1, (Target.Size.Z + (NewWindow.Hitbox.Size.Z / 2)) - 1)
-					if Mag >= (Target.Size.Z + (NewWindow.Hitbox.Size.X / 2)) - 1 then
+					if Mag >= ((Target.Size.Z / 2) - (NewWindow.Hitbox.Size.X / 2)) - 2 then
 					else
 						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(Mag), 0, 0)
 					end
 				elseif MousePos.Z > Target.Position.Z then
-					if Mag >= (Target.Size.Z - (NewWindow.Hitbox.Size.X / 2)) - 1 then
+					if Mag >= ((Target.Size.Z / 2) - (NewWindow.Hitbox.Size.X / 2)) - 2 then
 					else
 						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(-Mag), 0, 0)
 					end
 				end
+				
+			elseif (Target.Orientation.Y >= 90 and Target.Orientation.Y <= 180) then -- +X
+				if MousePos.X > Target.Position.X then
+					if Mag >= ((Target.Size.Z / 2) - (NewWindow.Hitbox.Size.X / 2)) - 2 then
+					else
+						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(-Mag), 0, 0)
+					end
+				elseif MousePos.X < Target.Position.X then
+					if Mag >= ((Target.Size.Z / 2) - (NewWindow.Hitbox.Size.X / 2)) - 2 then
+					else
+						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(Mag), 0, 0)
+					end
+				end
+			elseif (Target.Orientation.Y <= -90 and Target.Orientation.Y >= -180)  then -- -X
+				if MousePos.X < Target.Position.X then
+					if Mag >= ((Target.Size.Z / 2) - (NewWindow.Hitbox.Size.X / 2)) - 2 then
+					else
+						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(-Mag), 0, 0)
+					end
+				elseif MousePos.X > Target.Position.X then
+					if Mag >= ((Target.Size.Z / 2) - (NewWindow.Hitbox.Size.X / 2)) - 2 then
+					else
+						NewCFrame = CFrame.new(Target.Position) * CFrame.Angles(math.rad(Target.Orientation.X), math.rad(Target.Orientation.Y + 90), math.rad(Target.Orientation.Z)) * CFrame.new(math.floor(Mag), 0, 0)
+					end
+				end
 			end
-			NewWindow:SetPrimaryPartCFrame(NewCFrame)
+			if NewCFrame ~= nil then
+				NewWindow:SetPrimaryPartCFrame(NewCFrame)
+			else
+				NewWindow:Destroy() -- What in tarnation?!
+			end
 		end
 		
 	elseif SelectedBuilding == BuildModes[4].Value and Target.Name == "Baseplate" then
@@ -140,7 +167,7 @@ Mouse.Button1Down:connect(function()
 			P2Placed = true
 			local P1Pos, P2Pos = P1.Position, P2.Position
 			Remotes.Build:FireServer(P1Pos, P2Pos, Wall, WallS1, WallS2, Surfaces) -- Build plez...
-			wait(0.1)
+			wait(0.25)
 			P1:Destroy() P2:Destroy()
 			P1 = nil P2 = nil
 			P1Placed = false P2Placed = false
@@ -187,7 +214,7 @@ while wait(0.03) do
 			
 			
 			Wall.CFrame = CFrame.new(Vector3.new(MP.X, MP.Y, MP.Z), P1.Position) * CFrame.new(0, 0, 0)
-			Wall.Size = Vector3.new(1, 8, Mag)
+			Wall.Size = Vector3.new(0.45, 8, Mag)
 			
 			WallS1.CFrame = CFrame.new(Vector3.new(MP.X, MP.Y, MP.Z), P1.Position) * CFrame.new(0.1, 0, 0)
 			WallS1.Size = Vector3.new(0.2, 8, Mag)
